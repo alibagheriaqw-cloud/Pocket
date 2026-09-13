@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>برنامه آماده‌سازی خدمت</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --ink:#242A1F;
+    --olive-deep:#3F4B2E;
+    --olive:#5C6B44;
+    --khaki:#A69B6E;
+    --sand:#EFEADA;
+    --sand-2:#E3DCC4;
+    --brass:#8C6D3F;
+    --ok:#4A6B3D;
+    --line:#C9BF9E;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Vazirmatn', Tahoma, sans-serif;
+    background:
+      repeating-linear-gradient(135deg, rgba(92,107,68,0.05) 0px, rgba(92,107,68,0.05) 2px, transparent 2px, transparent 14px),
+      var(--sand);
+    color:var(--ink);
+    min-height:100vh;
+    padding:0 0 60px;
+  }
+
+  header{
+    background:var(--olive-deep);
+    color:var(--sand);
+    padding:28px 20px 24px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:4px solid var(--brass);
+  }
+  header::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:repeating-linear-gradient(-45deg, rgba(255,255,255,0.04) 0 8px, transparent 8px 16px);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:.5px;
+    color:var(--khaki);
+    margin:0 0 6px;
+  }
+  h1{
+    margin:0 0 4px;
+    font-size:26px;
+    font-weight:800;
+  }
+  .sub{
+    font-size:14px;
+    color:#D8D2B8;
+    margin:0;
+  }
+
+  .stats{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+    position:relative;
+  }
+  .stat{
+    flex:1;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:10px;
+    padding:10px 12px;
+    text-align:center;
+  }
+  .stat .n{
+    font-size:22px;
+    font-weight:800;
+    display:block;
+    line-height:1.1;
+  }
+  .stat .l{
+    font-size:11px;
+    color:#CFC8AA;
+    margin-top:2px;
+    display:block;
+  }
+
+  .progress-wrap{
+    margin-top:16px;
+    position:relative;
+  }
+  .progress-track{
+    height:8px;
+    border-radius:5px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--khaki);
+    border-radius:5px;
+    transition:width .4s ease;
+    width:0%;
+  }
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:18px 16px 0;
+  }
+
+  .week{
+    margin-bottom:22px;
+  }
+  .week-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding:0 4px 8px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:10px;
+  }
+  .week-title{
+    font-size:16px;
+    font-weight:700;
+    color:var(--olive-deep);
+  }
+  .week-note{
+    font-size:12px;
+    color:var(--brass);
+    font-weight:600;
+  }
+
+  .day{
+    background:#FBF9F1;
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-bottom:10px;
+    overflow:hidden;
+  }
+  .day-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 14px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .day-head .left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .day-num{
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    background:var(--sand-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:13px;
+    color:var(--olive-deep);
+    flex-shrink:0;
+  }
+  .day.complete .day-num{
+    background:var(--ok);
+    color:#fff;
+  }
+  .day-name{
+    font-size:14px;
+    font-weight:600;
+  }
+  .day-frac{
+    font-size:12px;
+    color:#8A836A;
+  }
+  .chevron{
+    font-size:12px;
+    color:#8A836A;
+    transition:transform .2s ease;
+  }
+  .day.open .chevron{
+    transform:rotate(180deg);
+  }
+
+  .items{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+  }
+  .day.open .items{
+    max-height:400px;
+  }
+  .item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 14px 9px 40px;
+    border-top:1px solid #EFE9D6;
+    font-size:13.5px;
+  }
+  .item input{
+    width:18px;
+    height:18px;
+    accent-color:var(--olive);
+    flex-shrink:0;
+    cursor:pointer;
+  }
+  .item label{
+    flex:1;
+    cursor:pointer;
+  }
+  .item.checked label{
+    text-decoration:line-through;
+    color:#9C9678;
+  }
+
+  footer{
+    max-width:640px;
+    margin:20px auto 0;
+    padding:0 16px;
+    text-align:center;
+  }
+  .reset-btn{
+    background:none;
+    border:1px solid var(--line);
+    color:#8A836A;
+    font-family:inherit;
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .reset-btn:active{
+    background:var(--sand-2);
+  }
+
+  .loading{
+    text-align:center;
+    padding:40px;
+    color:#8A836A;
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">آماده‌سازی جسمانی</p>
+  <h1>برنامه یک‌ماهه پیش از خدمت</h1>
+  <p class="sub">۴ هفته، تدریجی، برای عادت‌دادن بدن و ذهن به نظم پادگان</p>
+  <div class="stats">
+    <div class="stat"><span class="n" id="statDone">۰</span><span class="l">مورد انجام‌شده</span></div>
+    <div class="stat"><span class="n" id="statStreak">۰</span><span class="l">روز پشت‌سرهم</span></div>
+    <div class="stat"><span class="n" id="statPercent">٪۰</span><span class="l">پیشرفت کل</span></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="loading">در حال بارگذاری...</div>
+</main>
+
+<footer>
+  <button class="reset-btn" id="resetBtn">پاک‌کردن همه تیک‌ها</button>
+</footer>
+
+<script>
+const faDigits = n => String(n).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+const weeks = [
+  {
+    title: 'هفته ۱ و ۲ — پایه‌سازی',
+    note: 'روزهای ۱ تا ۱۴',
+    days: Array.from({length:14}, (_,i)=>({
+      idx: i+1,
+      items: [
+        'کراتین صبح (۵ گرم)',
+        'پیاده‌روی صبح ۳۰ دقیقه',
+        'شنا صبح (۲۰ عدد)',
+        'شنا شب (۲۰ عدد)',
+        'کراتین شب (۵ گرم)'
+      ]
+    }))
+  },
+  {
+    title: 'هفته ۳ — افزایش شدت',
+    note: 'روزهای ۱۵ تا ۲۱',
+    days: Array.from({length:7}, (_,i)=>({
+      idx: i+15,
+      items: [
+        'کراتین صبح (۵ گرم)',
+        'دو صبحگاهی ۲۰ دقیقه',
+        'شنا صبح (۳۰ عدد)',
+        'شنا شب (۳۰ عدد)',
+        'دراز و نشست (۲۰ عدد)',
+        'اسکوات (۱۵ عدد)',
+        'کراتین شب (۵ گرم)'
+      ]
+    }))
+  },
+  {
+    title: 'هفته ۴ — شبیه‌سازی پادگان',
+    note: 'روزهای ۲۲ تا ۳۰',
+    days: Array.from({length:9}, (_,i)=>({
+      idx: i+22,
+      items: [
+        'بیداری ساعت ۶:۰۰',
+        'کراتین صبح (۵ گرم)',
+        'ست ترکیبی: دو + شنا + دراز و نشست + اسکوات',
+        'شنا شب (۳۰ عدد)',
+        'کراتین شب (۵ گرم)',
+        i % 7 === 0 ? 'پیاده‌روی طولانی ۴۵-۶۰ دقیقه با کوله سبک' : null
+      ].filter(Boolean)
+    }))
+  }
+];
+
+let state = {}; // { "day-1": [true,false,...] }
+let openDay = null;
+
+function itemKey(dayIdx){ return 'day-' + dayIdx; }
+
+async function loadState(){
+  try{
+    const res = await window.storage.get('routine-state', false);
+    state = res && res.value ? JSON.parse(res.value) : {};
+  }catch(e){
+    state = {};
+  }
+}
+
+async function saveState(){
+  try{
+    await window.storage.set('routine-state', JSON.stringify(state), false);
+  }catch(e){
+    console.error('save failed', e);
+  }
+}
+
+function totalItemsCount(){
+  let total = 0;
+  weeks.forEach(w => w.days.forEach(d => total += d.items.length));
+  return total;
+}
+
+function doneItemsCount(){
+  let done = 0;
+  weeks.forEach(w => w.days.forEach(d => {
+    const arr = state[itemKey(d.idx)] || [];
+    done += arr.filter(Boolean).length;
+  }));
+  return done;
+}
+
+function computeStreak(){
+  // consecutive fully-completed days starting from day 1
+  let streak = 0;
+  const allDays = weeks.flatMap(w => w.days);
+  for(const d of allDays){
+    const arr = state[itemKey(d.idx)] || [];
+    const complete = arr.length === d.items.length && arr.every(Boolean);
+    if(complete) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function render(){
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+
+  weeks.forEach(week => {
+    const weekEl = document.createElement('div');
+    weekEl.className = 'week';
+
+    const head = document.createElement('div');
+    head.className = 'week-head';
+    head.innerHTML = `<span class="week-title">${week.title}</span><span class="week-note">${week.note}</span>`;
+    weekEl.appendChild(head);
+
+    week.days.forEach(day => {
+      const key = itemKey(day.idx);
+      const arr = state[key] || new Array(day.items.length).fill(false);
+      state[key] = arr;
+      const doneCount = arr.filter(Boolean).length;
+      const complete = doneCount === day.items.length;
+
+      const dayEl = document.createElement('div');
+      dayEl.className = 'day' + (complete ? ' complete' : '') + (openDay === day.idx ? ' open' : '');
+
+      const dayHead = document.createElement('div');
+      dayHead.className = 'day-head';
+      dayHead.innerHTML = `
+        <div class="left">
+          <div class="day-num">${faDigits(day.idx)}</div>
+          <div class="day-name">روز ${faDigits(day.idx)}</div>
+        </div>
+        <div class="left">
+          <span class="day-frac">${faDigits(doneCount)}/${faDigits(day.items.length)}</span>
+          <span class="chevron">▾</span>
+        </div>
+      `;
+      dayHead.addEventListener('click', () => {
+        openDay = (openDay === day.idx) ? null : day.idx;
+        render();
+      });
+      dayEl.appendChild(dayHead);
+
+      const itemsEl = document.createElement('div');
+      itemsEl.className = 'items';
+      day.items.forEach((text, i) => {
+        const checked = arr[i];
+        const itemEl = document.createElement('div');
+        itemEl.className = 'item' + (checked ? ' checked' : '');
+        const cbId = `cb-${day.idx}-${i}`;
+        itemEl.innerHTML = `
+          <input type="checkbox" id="${cbId}" ${checked ? 'checked' : ''}>
+          <label for="${cbId}">${text}</label>
+        `;
+        const cb = itemEl.querySelector('input');
+        cb.addEventListener('change', async () => {
+          state[key][i] = cb.checked;
+          await saveState();
+          render();
+        });
+        itemsEl.appendChild(itemEl);
+      });
+      dayEl.appendChild(itemsEl);
+      weekEl.appendChild(dayEl);
+    });
+
+    main.appendChild(weekEl);
+  });
+
+  const total = totalItemsCount();
+  const done = doneItemsCount();
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('statDone').textContent = faDigits(done);
+  document.getElementById('statStreak').textContent = faDigits(computeStreak());
+  document.getElementById('statPercent').textContent = '٪' + faDigits(pct);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+document.getElementById('resetBtn').addEventListener('click', async () => {
+  state = {};
+  openDay = null;
+  await saveState();
+  render();
+});
+
+(async () => {
+  await loadState();
+  // open first incomplete day by default
+  const allDays = weeks.flatMap(w => w.days);
+  for(const d of allDays){
+    const arr = state[itemKey(d.idx)] || new Array(d.items.length).fill(false);
+    if(!arr.every(Boolean)){ openDay = d.idx; break; }
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
